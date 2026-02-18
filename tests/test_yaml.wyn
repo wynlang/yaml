@@ -1,0 +1,28 @@
+fn yaml_parse(content: string) -> HashMap {
+    var result = HashMap.new()
+    var lines = content.split("\n")
+    for line in lines {
+        var trimmed = line.trim()
+        if trimmed.len() == 0 { continue }
+        if trimmed[0] == "#" { continue }
+        // Find first colon
+        for i in 0..trimmed.len() {
+            if trimmed[i] == ":" {
+                var key = trimmed.substring(0, i).trim()
+                var val = trimmed.substring(i + 1, trimmed.len()).trim()
+                result.insert(key, val)
+            }
+        }
+    }
+    return result
+}
+
+fn main() -> int {
+    Test.init("yaml")
+    var data = yaml_parse("name: Alice\nage: 30\n# comment\nactive: true")
+    Test.assert_eq_str(data.get("name"), "Alice", "name")
+    Test.assert_eq_str(data.get("age"), "30", "age")
+    Test.assert_eq_str(data.get("active"), "true", "active")
+    Test.summary()
+    return 0
+}

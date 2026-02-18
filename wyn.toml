@@ -1,0 +1,4 @@
+[project]
+name = "yaml"
+version = "0.1.0"
+description = "Simple YAML parser (key: value format)"
