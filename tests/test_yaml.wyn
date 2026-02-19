@@ -17,12 +17,17 @@ fn yaml_parse(content: string) -> HashMap {
     return result
 }
 
-fn main() -> int {
-    Test.init("yaml")
+test "name" {
     var data = yaml_parse("name: Alice\nage: 30\n# comment\nactive: true")
-    Test.assert_eq_str(data.get("name"), "Alice", "name")
-    Test.assert_eq_str(data.get("age"), "30", "age")
-    Test.assert_eq_str(data.get("active"), "true", "active")
-    Test.summary()
-    return 0
+    assert_eq(data.get("name"), "Alice")
+}
+
+test "age" {
+    var data = yaml_parse("name: Alice\nage: 30\n# comment\nactive: true")
+    assert_eq(data.get("age"), "30")
+}
+
+test "active" {
+    var data = yaml_parse("name: Alice\nage: 30\n# comment\nactive: true")
+    assert_eq(data.get("active"), "true")
 }
