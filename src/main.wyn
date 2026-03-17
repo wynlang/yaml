@@ -1,0 +1,43 @@
+// yaml — Simple YAML key:value parser. Pure Wyn.
+
+fn yaml_parse(content: string) -> HashMap {
+    var map = HashMap.new()
+    var lines = content.split("\n")
+    for line in lines {
+        var trimmed = line.trim()
+        if trimmed.len() == 0 { continue }
+        if trimmed.starts_with("#") { continue }
+        // Find first colon — everything before is key, everything after is value
+        var colon = -1
+        for i in 0..trimmed.len() {
+            if trimmed[i] == ":" {
+                colon = i
+                break
+            }
+        }
+        if colon > 0 {
+            var key = trimmed.substring(0, colon).trim()
+            var val = trimmed.substring(colon + 1, trimmed.len()).trim()
+            map.insert(key, val)
+        }
+    }
+    return map
+}
+
+fn yaml_to_string(map: HashMap, keys: [string]) -> string {
+    var result = ""
+    for key in keys {
+        var val = map.get(key)
+        result = result + key + ": " + val + "\n"
+    }
+    return result
+}
+
+fn main() {
+    var input = "# config\nname: wyn\nversion: 1.0\nurl: http://example.com:8080\nauthor: team"
+    var map = yaml_parse(input)
+    println("name = " + map.get("name"))
+    println("version = " + map.get("version"))
+    println("url = " + map.get("url"))
+    println("author = " + map.get("author"))
+}
