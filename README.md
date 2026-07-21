@@ -1,4 +1,4 @@
-# yaml — Official Wyn Package
+# yaml - Official Wyn Package
 
 Simple YAML parser (key: value). Pure Wyn.
 
