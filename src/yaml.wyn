@@ -1,0 +1,57 @@
+// yaml - Simple YAML key:value parser. Pure Wyn.
+//
+// NOTE: Wyn's HashMap cannot cross a module import boundary, so the public
+// (importable) surface is string-in / string-out. `yaml_get` parses and
+// returns one value by key; `yaml_parse` (returning a HashMap) remains for
+// same-module use.
+
+// Parse `content` and return the value for `key`, or "" if absent.
+pub fn yaml_get(content: string, key: string) -> string {
+    var lines = content.split("\n")
+    for line in lines {
+        var trimmed = line.trim()
+        if trimmed.len() == 0 { continue }
+        if trimmed.starts_with("#") { continue }
+        var colon = trimmed.index_of(":")
+        if colon > 0 {
+            var k = trimmed.substring(0, colon).trim()
+            if k == key {
+                return trimmed.substring(colon + 1, trimmed.len()).trim()
+            }
+        }
+    }
+    return ""
+}
+
+// True if `key` is present in `content`.
+pub fn yaml_has(content: string, key: string) -> bool {
+    var lines = content.split("\n")
+    for line in lines {
+        var trimmed = line.trim()
+        if trimmed.len() == 0 { continue }
+        if trimmed.starts_with("#") { continue }
+        var colon = trimmed.index_of(":")
+        if colon > 0 {
+            if trimmed.substring(0, colon).trim() == key { return true }
+        }
+    }
+    return false
+}
+
+// Parse into a HashMap (same-module use only - HashMap can't cross imports).
+pub fn yaml_parse(content: string) -> HashMap {
+    var map = HashMap.new()
+    var lines = content.split("\n")
+    for line in lines {
+        var trimmed = line.trim()
+        if trimmed.len() == 0 { continue }
+        if trimmed.starts_with("#") { continue }
+        var colon = trimmed.index_of(":")
+        if colon > 0 {
+            var key = trimmed.substring(0, colon).trim()
+            var val = trimmed.substring(colon + 1, trimmed.len()).trim()
+            map.insert(key, val)
+        }
+    }
+    return map
+}

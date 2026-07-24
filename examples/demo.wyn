@@ -1,0 +1,8 @@
+import yaml
+
+fn main() {
+    var doc = "# config\nname: wyn\nversion: 1.0\nurl: http://example.com:8080"
+    println("name = ${yaml.yaml_get(doc, "name")}")
+    println("version = ${yaml.yaml_get(doc, "version")}")
+    println("url = ${yaml.yaml_get(doc, "url")}")
+}

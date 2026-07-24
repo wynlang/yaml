@@ -1,53 +1,19 @@
-fn yaml_parse(content: string) -> HashMap {
-    var map = HashMap.new()
-    var lines = content.split("\n")
-    for line in lines {
-        var trimmed = line.trim()
-        if trimmed.len() == 0 { continue }
-        if trimmed.starts_with("#") { continue }
-        var colon = -1
-        for i in 0..trimmed.len() {
-            if trimmed[i] == ":" {
-                colon = i
-                break
-            }
-        }
-        if colon > 0 {
-            var key = trimmed.substring(0, colon).trim()
-            var val = trimmed.substring(colon + 1, trimmed.len()).trim()
-            map.insert(key, val)
-        }
-    }
-    return map
+// Exercises the shipped lib in src/yaml.wyn via the tests/yaml.wyn symlink.
+import yaml
+
+test "get name" {
+    var doc = "# config\nname: wyn\nversion: 1.0"
+    assert_eq(yaml.yaml_get(doc, "name"), "wyn")
 }
-
-fn main() -> int {
-    // Basic parsing
-    var data = yaml_parse("name: Alice\nage: 30\n# comment\nactive: true")
-    assert_eq(data.get("name"), "Alice")
-    assert_eq(data.get("age"), "30")
-    assert_eq(data.get("active"), "true")
-
-    // Empty input
-    var empty = yaml_parse("")
-    assert_eq(empty.len(), 0)
-
-    // Comments only
-    var comments = yaml_parse("# only comments\n# nothing here")
-    assert_eq(comments.len(), 0)
-
-    // Colon in value (URL)
-    var url_data = yaml_parse("url: http://example.com:8080/path")
-    assert_eq(url_data.get("url"), "http://example.com:8080/path")
-
-    // Empty value
-    var ev = yaml_parse("key:")
-    assert_eq(ev.get("key"), "")
-
-    // Whitespace trimming
-    var ws = yaml_parse("  name  :  Alice Bob  ")
-    assert_eq(ws.get("name"), "Alice Bob")
-
-    println("yaml: 9 tests passed")
-    return 0
+test "get value with colon in it" {
+    var doc = "url: http://x.com:8080"
+    assert_eq(yaml.yaml_get(doc, "url"), "http://x.com:8080")
 }
+test "get missing" {
+    assert_eq(yaml.yaml_get("name: wyn", "nope"), "")
+}
+test "skips comments" {
+    assert_eq(yaml.yaml_get("# name: fake\nname: real", "name"), "real")
+}
+test "has present" { assert(yaml.yaml_has("a: 1\nb: 2", "b")) }
+test "has absent" { assert(not yaml.yaml_has("a: 1", "z")) }
